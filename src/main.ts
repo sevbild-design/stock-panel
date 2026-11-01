@@ -1,38 +1,82 @@
-// src/main.ts
+// src/main.ts — точка входа. Здесь собирается всё приложение.
+// ПРЕЗЕНТЕР пока живёт прямо в этом файле (упрощение) —
+// в большом проекте это был бы отдельный класс.
+import './styles.css';
+
+import { Modal } from './components/views/Modal';
+import { ReceiptForm } from './components/views/ReceiptForm';
+
 import { EventEmitter } from './components/base/Events';
 import { Products } from './components/models/Products';
+import { Catalog } from './components/views/Catalog';
+import { ProductCard } from './components/views/ProductCard';
 import { IProduct } from './types';
+import { cloneTemplate, ensureElement } from './utils/utils';
 
 // Тестовые данные (в проектной работе такие придут с сервера).
 const testItems: IProduct[] = [
-    { id: 'p1', name: 'Кофе в зёрнах «Утро»', price: 690, stock: 12 },
-    { id: 'p2', name: 'Чай зелёный «Сенча»', price: 320, stock: 4 },
-    { id: 'p3', name: 'Печенье овсяное', price: 150, stock: 0 },
+  { id: 'p1', name: 'Кофе в зёрнах «Утро»', price: 690, stock: 12 },
+  { id: 'p2', name: 'Чай зелёный «Сенча»', price: 320, stock: 4 },
+  { id: 'p3', name: 'Печенье овсяное', price: 150, stock: 0 },
 ];
 
-// Один брокер на всё приложение; модель получает его через конструктор.
+// --- Участники ---
+
+// Единственный брокер на всё приложение.
 const events = new EventEmitter();
+
+// Модель получает брокер, чтобы объявлять об изменениях.
 const products = new Products(events);
-let changesCount = 0
 
-// Тест-подписчик: услышал событие — забрал у модели свежее состояние геттером.
+// Каталог живёт в статичной разметке страницы.
+const catalog = new Catalog(ensureElement<HTMLElement>('.catalog__list'));
+
+// --- Презентер ---
+
+// Каталог изменился → забрать товары у модели и перерисовать карточки.
 events.on('catalog:changed', () => {
-    console.log(
-        'Событие catalog:changed! Остатки:',
-        products.getItems().map((item) => `${item.name}: ${item.stock}`)
-    );
+  const cards = products.getItems().map((item) =>
+    new ProductCard(cloneTemplate<HTMLElement>('#product-card')).render({
+      title: item.name, // у модели поле name, у карточки — title
+      price: item.price,
+      stock: item.stock,
+    })
+  );
+
+  catalog.render({ items: cards });
 });
-events.on('catalog:changed', () => {
-    changesCount += 1;
-    console.log(`Изменений каталога: ${changesCount}`);
-}
-)
 
-// 1. Загрузка каталога — модель должна объявить об изменении.
+// --- Запуск ---
+
+// Загружаем каталог. Модель объявит 'catalog:changed' — и презентер отрисует его.
 products.setItems(testItems);
 
-// 2. Валидное поступление — ещё одно объявление, остаток «Сенчи» вырастет до 9.
-products.receive('p2', 5);
 
-// 3. Нарушение правила — данные не изменились, события быть не должно.
-products.receive('p1', -3);
+// =============================================================
+// Временный тест: модалка и форма (удалим в конце урока).
+// Готовый код выше не трогаем — новые детали проверяем рядом.
+// =============================================================
+
+// Свой брокер: новые детали проверяем в изоляции от приложения.
+const testEvents = new EventEmitter();
+
+// Модалка живёт в статичной разметке страницы.
+const modal = new Modal(ensureElement<HTMLElement>('#modal-container'));
+
+// Форму создаём один раз из шаблона — статичный компонент.
+const receiptForm = new ReceiptForm(testEvents, cloneTemplate<HTMLFormElement>('#receipt'));
+
+// Слушаем всю «переписку» формы — приём из урока о событиях.
+testEvents.onAll(({ eventName, data }) => console.log('Событие формы:', eventName, data));
+
+// Открываем модалку с формой, отрисованной из фейковых данных.
+modal.render({
+  content: receiptForm.render({
+    title: 'Поступление: Тестовый товар',
+    stock: 'Текущий остаток: 4 шт',
+    reason: null,
+    quantity: '',
+    valid: true, // включим кнопку, чтобы проверить и submit
+    errors: '',
+  }),
+});

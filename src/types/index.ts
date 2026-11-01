@@ -7,3 +7,6 @@ export interface IProduct {
   price: number;
   stock: number;
 }
+
+// Причина (вид) поступления товара.
+export type TReceiptReason = 'supplier' | 'customer-return';

@@ -4,8 +4,8 @@
 
 .page {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   color: #1f2933;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   background: #f4f5f7;
 }
 
@@ -21,18 +21,18 @@
 }
 
 .catalog__list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
   display: grid;
   gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .card {
-  padding: 16px 20px;
-  background: #ffffff;
   border-radius: 12px;
+  padding: 16px 20px;
   box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08), 0 8px 24px rgba(15, 23, 42, 0.06);
+  background: #ffffff;
 }
 
 .card__title {
@@ -52,4 +52,125 @@
 
 .card__price {
   font-weight: 600;
+}
+
+/* ----- Модальное окно ----- */
+.modal {
+  position: fixed;
+  inset: 0;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  background: rgba(15, 23, 42, 0.5);
+}
+
+.modal_active {
+  display: flex;
+}
+
+.modal__container {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  border-radius: 12px;
+  padding: 28px;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08), 0 8px 24px rgba(15, 23, 42, 0.06);
+  background: #ffffff;
+}
+
+.modal__close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  color: #7b8794;
+  font-size: 22px;
+  line-height: 1;
+  background: transparent;
+}
+
+/* ----- Форма документа поступления ----- */
+.receipt {
+  display: grid;
+  gap: 14px;
+}
+
+.receipt__title {
+  margin: 0;
+  font-size: 18px;
+}
+
+.receipt__stock {
+  margin: 0;
+  color: #7b8794;
+  font-size: 14px;
+}
+
+.receipt__reasons {
+  display: flex;
+  gap: 8px;
+}
+
+.receipt__field {
+  display: grid;
+  gap: 6px;
+  color: #7b8794;
+  font-size: 14px;
+}
+
+.receipt__input {
+  width: 100%;
+  border: 1px solid #d3d9df;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 15px;
+}
+
+.receipt__errors {
+  min-height: 18px;
+  color: #dc2626;
+  font-size: 14px;
+}
+
+/* ----- Кнопки ----- */
+button {
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  background: #3b82f6;
+  cursor: pointer;
+}
+
+button:hover {
+  filter: brightness(1.05);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Кнопки-переключатели: вторичный стиль и активное состояние */
+.button_alt {
+  flex: 1;
+  border: 1px solid #d3d9df;
+  color: #1f2933;
+  background: #fff;
+}
+
+.button_alt:hover {
+  border-color: #3b82f6;
+  filter: none;
+}
+
+.button_alt-active {
+  border-color: #3b82f6;
+  color: #fff;
+  background: #3b82f6;
 }
