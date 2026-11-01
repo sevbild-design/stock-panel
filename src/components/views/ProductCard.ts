@@ -1,44 +1,35 @@
 // src/components/views/ProductCard.ts
 import { ensureElement } from '../../utils/utils';
-import { Component } from '../base/Component';
+import { Card } from './Card';
 
-// Данные, которые карточка умеет показывать.
-interface IProductCard {
-  title: string;
-  price: number;
-  stock: number;
+// Обработчики действий пользователя на карточке. Карточка — динамический
+// компонент: события не эмитит, а получает готовые колбэки через конструктор.
+interface IProductCardActions {
+  onClick: () => void; // клик по телу карточки — подробности
+  onReceipt: () => void; // клик по кнопке «Поступление товара»
 }
 
-// VIEW — карточка товара в списке. Получает готовую разметку (клон шаблона),
-// один раз находит свои элементы и обновляет их через сеттеры.
-export class ProductCard extends Component<IProductCard> {
-  protected titleElement: HTMLElement;
-  protected priceElement: HTMLElement;
-  protected stockElement: HTMLElement;
+// VIEW — карточка товара в списке. Заголовок, цену и остаток наследует
+// у Card, от себя добавляет кнопку «Поступление товара».
+export class ProductCard extends Card {
+  protected receiptButton: HTMLButtonElement;
 
-  constructor(container: HTMLElement) {
+  constructor(container: HTMLElement, actions?: IProductCardActions) {
     super(container);
 
-    this.titleElement = ensureElement<HTMLElement>('.card__title', this.container);
-    this.priceElement = ensureElement<HTMLElement>('.card__price', this.container);
-    this.stockElement = ensureElement<HTMLElement>('.card__stock', this.container);
-  }
+    this.receiptButton = ensureElement<HTMLButtonElement>('.card__receipt', this.container);
 
-  // Сеттеры protected: снаружи компонент обновляется только через render().
-  protected set title(value: string) {
-    this.titleElement.textContent = value;
-  }
-
-  protected set price(value: number) {
-    this.priceElement.textContent = `${value} ₽`;
-  }
-
-  protected set stock(value: number) {
-    if (value === 0) {
-      this.stockElement.classList.add('card__stock_empty');
-      this.stockElement.textContent = 'Товара нет в наличии!';
-    } else {
-      this.stockElement.textContent = `Остаток: ${value} шт`;
+    // Клик по кнопке → документ поступления. Гасим всплытие, чтобы этот
+    // клик не сработал ещё и как клик по телу карточки.
+    if (actions?.onReceipt) {
+      this.receiptButton.addEventListener('click', (event) => {
+        event.stopPropagation();
+        actions.onReceipt();
+      });
+    }
+    // Клик по телу карточки → подробности о товаре.
+    if (actions?.onClick) {
+      this.container.addEventListener('click', actions.onClick);
     }
   }
 }

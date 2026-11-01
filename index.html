@@ -31,6 +31,7 @@
         <h2 class="card__title"></h2>
         <p class="card__stock"></p>
         <span class="card__price"></span>
+        <button class="button card__receipt" type="button">Поступление товара</button>
       </li>
     </template>
 
@@ -70,6 +71,18 @@
         </button>
         <span class="receipt__errors"></span>
       </form>
+    </template>
+
+    <!-- Шаблон подробной карточки товара. Показывается в модалке по клику на карточку. -->
+    <template id="product-preview">
+      <div class="preview">
+        <h2 class="card__title"></h2>
+        <p class="card__description"></p>
+        <div class="preview__meta">
+          <span class="card__price"></span>
+          <span class="card__stock"></span>
+        </div>
+      </div>
     </template>
 
     <script type="module" src="/src/main.ts"></script>
