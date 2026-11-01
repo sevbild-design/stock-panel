@@ -46,6 +46,10 @@
   font-size: 14px;
 }
 
+.card__stock_empty {
+  color: #dc2626;
+}
+
 .card__price {
   font-weight: 600;
 }

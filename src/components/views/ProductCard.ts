@@ -34,6 +34,11 @@ export class ProductCard extends Component<IProductCard> {
   }
 
   protected set stock(value: number) {
-    this.stockElement.textContent = `Остаток: ${value} шт`;
+    if (value === 0) {
+      this.stockElement.classList.add('card__stock_empty');
+      this.stockElement.textContent = 'Товара нет в наличии!';
+    } else {
+      this.stockElement.textContent = `Остаток: ${value} шт`;
+    }
   }
 }
